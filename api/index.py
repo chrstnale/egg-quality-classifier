@@ -7,9 +7,7 @@ import json
 import base64
 from io import BytesIO
 import time
-import pandas as pd
 
-from statsmodels.tsa.statespace.sarimax import SARIMAX
 from datetime import datetime
 
 from utils.eggmodel import get_eggmodel
