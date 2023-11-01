@@ -5,12 +5,10 @@ from PIL import Image
 import numpy as np
 import json
 import base64
-from io import BytesIO, StringIO
+from io import BytesIO
 import time
-import requests
 import pandas as pd
 
-from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from datetime import datetime
 
