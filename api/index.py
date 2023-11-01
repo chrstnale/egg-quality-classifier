@@ -24,9 +24,9 @@ eggmodel = get_eggmodel('data/kita_coba.onnx')
 print("eggmodel", eggmodel)
 
 @app.route('/')
-
 def home():
     return 'Welcome!'
+
 @app.route("/egg-category", methods=['POST'])
 def predict_egg_category():
     image = None
