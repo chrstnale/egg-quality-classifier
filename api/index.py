@@ -21,7 +21,9 @@ print("eggmodel", eggmodel)
 
 @app.route('/')
 def home():
-    return 'Welcome!'
+    return jsonify({
+        'message': 'welcome to eggmodel-be-ml'
+    }), 200
 
 @app.route("/egg-category", methods=['POST'])
 def predict_egg_category():
@@ -30,6 +32,7 @@ def predict_egg_category():
     if 'image-type' in request.args.to_dict() and request.args['image-type'] == 'b64':
         print('using base64')
         body = request.json
+        print(body.keys())
         if 'image' not in request.json:
             response = jsonify(json.loads(json.dumps(
                 {'message': 'No image'}, cls=NpEncoder)))
@@ -37,8 +40,20 @@ def predict_egg_category():
             response.headers['Content-Type'] = 'application/json'
             return response
 
-        base64String = body['image'].split(',')[-1]
-        print(base64String)
+        pIndex = body['image'].find("</p>")
+        if pIndex != -1:
+            body['image'] = body['image'][pIndex+4:]
+
+        pIndex = body['image'].find("?image-type=b64")
+        if pIndex != -1:
+            body['image'] = body['image'][pIndex+15:]
+
+        pIndex = body['image'].find("}")
+        if pIndex != -1:
+            body['image'] = body['image'][pIndex+1:]
+
+        base64String = body['image']
+        print("img:",base64String)
 
         # im_bytes is a binary image
         im_bytes = base64.b64decode(base64String)
@@ -68,8 +83,7 @@ def predict_egg_category():
     output = eggmodel.run(None, {'input_1': image})
     inference_time_stop = time.time()
     inference_duration = inference_time_stop - inference_time_start
-    classnames = ['good',
-                  'bad',]
+    classnames = ['1','2',]
 
     output_index = np.argmax(output)
     output_classname = classnames[output_index]
@@ -80,7 +94,7 @@ def predict_egg_category():
         'className': output_classname,
         'inferenceTimeSeconds': inference_duration,
         'img': base64String,
-        'time': current_date
+        'time': current_date,
     }, cls=NpEncoder)))
     response.status_code = 200
     return response
